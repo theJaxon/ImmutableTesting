@@ -1,0 +1,17 @@
+- name: Download and unarchive minishift folder 
+  unarchive:
+    src: "https://github.com/minishift/minishift/releases/download/v{{ version }}/minishift-{{ version }}-linux-amd64.tgz"
+    dest: /tmp
+    remote_src: yes
+
+- name: Place minishift binary into correct location
+  copy:
+    src: "/tmp/minishift-{{ version }}-linux-amd64/minishift"
+    dest: "{{ binary_dest }}/minishift"
+    mode: '0777'
+    remote_src: yes
+
+- name: Remove temp files
+  file:
+    path: "/tmp/minishift-{{ version }}-linux-amd64"
+    state: absent
