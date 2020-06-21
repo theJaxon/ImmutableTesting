@@ -1,0 +1,52 @@
+- name: Add an apt signing key for Jenkins
+  apt_key:
+    url: "{{ jenkins_signing_key_url }}"
+    state: present
+
+- name: Add Jenkins apt repo
+  apt_repository:
+    repo: "{{ jenkins_apt_repo }}"
+    state: present
+    filename: jenkins
+    update_cache: yes
+
+
+- name: Install JRE & Jenkins 
+  apt:
+    name: "{{ packages }}"
+    state: present 
+
+- name: Add jenkins user to docker group
+  user:
+    name: jenkins
+    group: docker
+
+- name: Enable and start jenkins service 
+  service:
+    name: jenkins 
+    enabled: yes 
+    state: started
+
+- name: Wait for Jenkins to start up before proceeding.
+  uri:
+    url: "http://localhost:8080"
+    method: GET
+    return_content: "yes"
+    timeout: 5
+    body_format: raw
+    follow_redirects: "no"
+    status_code: 200,403
+  register: result
+  until: (result.status == 403 or result.status == 200) and (result.content.find("Please wait while") == -1)
+  retries: 60
+  delay: 5
+  changed_when: false
+  check_mode: false
+
+- name: Get initial Jenkins password
+  shell: "cat {{ jenkins_pwd_path }}"
+  register: jenkins_password
+
+- name: Print initial Jenkins password
+  debug:
+    var: jenkins_password.stdout
