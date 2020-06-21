@@ -1,6 +1,9 @@
-gitea_dest: /var/lib/gitea
+gitea_dest: /usr/local/bin
 gitea_subdirectories:
 - /var/lib/gitea/custom 
 - /var/lib/gitea/data
 - /var/lib/gitea/log
 gitea_binary_url: https://dl.gitea.io/gitea/1.12.0/gitea-1.12.0-linux-amd64
+gitea_service_file_url: https://raw.githubusercontent.com/theJaxon/ImmutableTesting/master/roles/gitea/gitea.service
+gitea_service_file_dest: /etc/systemd/system
+gitea_temp_config_dir: /etc/gitea

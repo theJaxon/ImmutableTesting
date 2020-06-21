@@ -1,3 +1,8 @@
+- name: Create git group
+  group:
+    name: git 
+    state: present
+
 - name: Create git user 
   user: 
     name: git 
@@ -15,6 +20,7 @@
     state: directory
     owner: git
     group: git
+    mode: '0777'
 
 - name: Create gitea subdirectories {custom,data,log}
   file:
@@ -22,10 +28,31 @@
     state: directory
     owner: git 
     group: git   
-    mode: '0750'
+    mode: '0777'
+
+- name: Create temp directory for storing configs of the web installer
+  file:
+    path: "{{ gitea_temp_config_dir }}"
+    state: directory
+    owner: git 
+    group: git 
+    mode: '0777'
 
 - name: Download gitea binary 
   get_url:
     url: "{{ gitea_binary_url }}"
     dest: "{{ gitea_dest }}/gitea"
     mode: '0777'
+
+- name: Download gitea service file 
+  get_url: 
+    url: "{{ gitea_service_file_url }}"
+    dest: "{{ gitea_service_file_dest }}/gitea.service"
+    mode: '0777'
+
+- name: Enable and start gitea service
+  systemd:
+    name: gitea.service 
+    enabled: yes
+    state: started
+    daemon_reload: yes
