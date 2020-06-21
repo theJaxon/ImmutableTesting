@@ -7,3 +7,5 @@ gitea_binary_url: https://dl.gitea.io/gitea/1.12.0/gitea-1.12.0-linux-amd64
 gitea_service_file_url: https://raw.githubusercontent.com/theJaxon/ImmutableTesting/master/roles/gitea/gitea.service
 gitea_service_file_dest: /etc/systemd/system
 gitea_temp_config_dir: /etc/gitea
+app_ini_url: https://raw.githubusercontent.com/theJaxon/ImmutableTesting/master/roles/gitea/app.ini
+app_ini_dest: /etc/gitea

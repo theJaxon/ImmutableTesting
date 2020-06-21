@@ -56,3 +56,14 @@
     enabled: yes
     state: started
     daemon_reload: yes
+
+- name: Place app.ini into the target directory 
+  get_url: 
+    url: "{{ app_ini_url }}"
+    dest: "{{ app_ini_dest }}/app.ini"
+    force: yes
+
+- name: Reload the newly added app.ini config file 
+  systemd:
+    name: gitea.service 
+    state: restarted
