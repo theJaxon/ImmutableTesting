@@ -1,0 +1,31 @@
+- name: Create git user 
+  user: 
+    name: git 
+    group: git
+    comment: "Git Version Control"
+    create_home: True 
+    home: /home/git
+    shell: /bin/bash
+    password_lock: yes
+    system: True
+
+- name: Create the main gitea directory
+  file:
+    path: "{{ gitea_dest }}"
+    state: directory
+    owner: git
+    group: git
+
+- name: Create gitea subdirectories {custom,data,log}
+  file:
+    path: "{{ gitea_subdirectories }}"
+    state: directory
+    owner: git 
+    group: git   
+    mode: '0750'
+
+- name: Download gitea binary 
+  get_url:
+    url: "{{ gitea_binary_url }}"
+    dest: "{{ gitea_dest }}/gitea"
+    mode: '0777'
