@@ -11,9 +11,14 @@
     update_cache: yes
 
 
-- name: Install JRE & Jenkins 
+- name: Install JRE 
   apt:
-    name: "{{ packages }}"
+    name: openjdk-8-jre
+    state: present 
+
+- name: Install Jenkins 
+  apt:
+    name: jenkins
     state: present 
 
 - name: Add jenkins user to docker group
