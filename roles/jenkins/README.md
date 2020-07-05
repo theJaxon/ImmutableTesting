@@ -10,7 +10,7 @@ This defines a default username and password of "admin"
 
 3- Downloading jenkins-cli from the current jenkins installation 
 ```
-wget http://localhost:8080//jnlpJars/jenkins-cli.jar
+wget http://localhost:8080/jnlpJars/jenkins-cli.jar
 ```
 
 4- Installing a specific plugin using the CLI

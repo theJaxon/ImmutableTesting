@@ -21,10 +21,35 @@
     name: jenkins
     state: present 
 
-- name: Add jenkins user to docker group
-  user:
-    name: jenkins
-    group: docker
+- getent:
+    database: group
+    split: ':'
+
+- name: Add jenkins to docker group (only if docker group already exists)
+  user: 
+      name: jenkins
+      group: docker
+  when: item in ansible_facts.getent_group
+  with_items: 
+    - docker
+
+
+- name: Disable jenkins setup wizard
+  lineinfile:
+    path: "{{ jenkins_config_file }}"
+    line: JAVA_ARGS="-Djenkins.install.runSetupWizard=false"
+
+- name: Create groovy init directory 
+  file:
+    path: "{{ groovy_init_dir }}"
+    state: directory
+    mode: '0777'
+
+- name: Place basic security script in groovy directory
+  get_url:
+    url: "{{ groovy_basic_security_url }}"
+    dest: "{{ groovy_init_dir }}/basic-security.groovy"
+    mode: '0777'
 
 - name: Enable and start jenkins service 
   service:
@@ -32,26 +57,44 @@
     enabled: yes 
     state: started
 
-- name: Wait for Jenkins to start up before proceeding.
-  uri:
-    url: "http://localhost:8080"
-    method: GET
-    return_content: "yes"
-    timeout: 5
-    body_format: raw
-    follow_redirects: "no"
-    status_code: 200,403
-  register: result
-  until: (result.status == 403 or result.status == 200) and (result.content.find("Please wait while") == -1)
-  retries: 60
+- name: Include wait for jenkins task
+  include_tasks: jenkins_check.yml
+
+- name: Download Plugins script into vagrant home directory
+  get_url:
+    url: "{{ plugins_script_url }}"
+    dest: "{{ vagrant_home_dir }}"
+    mode: '0777'
+
+- name: Restart jenkins service 
+  service:
+      name: jenkins
+      state: restarted
+
+- name: Include wait for jenkins task
+  include_tasks: jenkins_check.yml
+
+- name: Download jenkins cli into vagrant home directory 
+  get_url:
+    url: "{{ jenkins_cli_url }}"
+    dest: "{{ vagrant_home_dir }}"
+    mode: '0777'
+  retries: 5
   delay: 5
-  changed_when: false
-  check_mode: false
+  register: result      
+  until: result is succeeded
 
-- name: Get initial Jenkins password
-  shell: "cat {{ jenkins_pwd_path }}"
-  register: jenkins_password
+- name: Run plugins scripts
+  shell: "{{vagrant_home_dir}}/plugins.sh"
+  args:
+    executable: /bin/bash
+  register: plugins_script
 
-- name: Print initial Jenkins password
+- name: Show installed plugins
   debug:
-    var: jenkins_password.stdout
+    var: plugins_script.stdout
+
+- name: Restart jenkins service 
+  service:
+      name: jenkins
+      state: restarted

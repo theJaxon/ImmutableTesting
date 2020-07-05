@@ -1,0 +1,15 @@
+- name: Wait for Jenkins to start up before proceeding.
+  uri:
+    url: "http://localhost:8080"
+    method: GET
+    return_content: "yes"
+    timeout: 5
+    body_format: raw
+    follow_redirects: "no"
+    status_code: 200,403
+  register: result
+  until: (result.status == 403 or result.status == 200) and (result.content.find("Please wait while") == -1)
+  retries: 60
+  delay: 5
+  changed_when: false
+  check_mode: false

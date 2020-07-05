@@ -2,4 +2,14 @@ jenkins_signing_key_url: https://pkg.jenkins.io/debian-stable/jenkins.io.key
 
 jenkins_apt_repo: deb https://pkg.jenkins.io/debian-stable binary/
 
-jenkins_pwd_path: /var/lib/jenkins/secrets/initialAdminPassword
+jenkins_config_file: /etc/default/jenkins
+
+jenkins_cli_url: http://localhost:8080/jnlpJars/jenkins-cli.jar
+
+groovy_init_dir: /var/lib/jenkins/init.groovy.d
+
+groovy_basic_security_url: https://raw.githubusercontent.com/theJaxon/ImmutableTesting/master/roles/jenkins/bypass%20setup%20wizard/basic-security.groovy
+
+plugins_script_url: https://raw.githubusercontent.com/theJaxon/ImmutableTesting/master/roles/jenkins/bypass%20setup%20wizard/plugins.sh
+
+vagrant_home_dir: /home/vagrant
