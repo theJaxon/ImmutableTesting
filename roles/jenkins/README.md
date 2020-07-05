@@ -15,7 +15,7 @@ wget http://localhost:8080//jnlpJars/jenkins-cli.jar
 
 4- Installing a specific plugin using the CLI
 ```
-java -jar jenkins-cli.jar -s http://localhost:8080/ -auth admin:admin install-plugin blueocean
+java -jar jenkins-cli.jar -auth admin:admin -s http://localhost:8080/ install-plugin blueocean
 ```
 
 5- Restarting jenkins after plugin installation
